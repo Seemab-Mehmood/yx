@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YX — Youth Engagement Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF8F3;
+    --paper-dim:#F1ECE0;
+    --ink:#14213D;
+    --ink-soft:#3A4566;
+    --gold:#C9A227;
+    --teal:#3A6F6F;
+    --rust:#B5482A;
+    --grey:#6B7280;
+    --line:rgba(20,33,61,0.14);
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px;}
+  @media(max-width:640px){.wrap{padding:0 20px;}}
+
+  /* ===== NAV ===== */
+  nav{
+    position:sticky;top:0;z-index:50;
+    background:rgba(250,248,243,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:22px;}
+  .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);}
+  nav .links{display:flex;gap:28px;font-size:14px;font-weight:500;}
+  nav .links a{text-decoration:none;color:var(--ink-soft);transition:color .2s;}
+  nav .links a:hover{color:var(--gold);}
+  @media(max-width:640px){nav .links{display:none;}}
+
+  /* ===== HERO ===== */
+  header.hero{padding:96px 0 72px;border-bottom:1px solid var(--line);}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--teal);margin-bottom:18px;display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:24px;height:1px;background:var(--teal);}
+  .hero-grid{display:grid;grid-template-columns:1.15fr 0.85fr;gap:64px;align-items:center;}
+  @media(max-width:880px){.hero-grid{grid-template-columns:1fr;gap:48px;}}
+  h1.title{font-size:clamp(38px,5.4vw,64px);line-height:1.04;}
+  h1.title em{font-style:italic;color:var(--gold);}
+  .sub{font-size:18px;line-height:1.6;color:var(--ink-soft);margin-top:22px;max-width:46ch;}
+  .byline{margin-top:28px;font-size:13px;color:var(--grey);line-height:1.7;border-left:2px solid var(--gold);padding-left:14px;}
+  .byline strong{color:var(--ink);font-weight:600;}
+  .cta-row{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap;}
+  .btn{
+    font-family:'Inter',sans-serif;font-weight:600;font-size:14px;
+    padding:13px 24px;border-radius:var(--radius);cursor:pointer;border:1px solid var(--ink);
+    text-decoration:none;display:inline-block;transition:all .2s;
+  }
+  .btn-primary{background:var(--ink);color:var(--paper);}
+  .btn-primary:hover{background:var(--gold);border-color:var(--gold);color:var(--ink);}
+  .btn-ghost{background:transparent;color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+
+  /* gauge */
+  .gauge-card{
+    background:var(--ink);border-radius:6px;padding:36px 28px 28px;
+    color:var(--paper);position:relative;overflow:hidden;
+  }
+  .gauge-card::after{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 80% 0%, rgba(201,162,39,0.18), transparent 60%);
+    pointer-events:none;
+  }
+  .gauge-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#9aa6c9;text-align:center;}
+  #gaugeScore{font-family:'Fraunces',serif;font-size:54px;text-align:center;margin-top:6px;color:var(--paper);}
+  #gaugeBand{text-align:center;font-size:13px;font-weight:600;letter-spacing:0.04em;margin-top:2px;color:var(--gold);}
+  .pillar-readout{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:24px;}
+  .pillar-readout div{text-align:center;}
+  .pillar-readout .pv{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;color:var(--paper);}
+  .pillar-readout .pl{font-size:10px;letter-spacing:0.07em;text-transform:uppercase;color:#8d99c0;margin-top:3px;}
+
+  /* ===== SECTION GENERIC ===== */
+  section{padding:80px 0;border-bottom:1px solid var(--line);}
+  .section-head{max-width:640px;margin-bottom:48px;}
+  .section-head h2{font-size:clamp(28px,3.4vw,40px);}
+  .section-head p{color:var(--ink-soft);font-size:16px;line-height:1.6;margin-top:14px;}
+
+  /* ===== PATHWAY ===== */
+  .pathway{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding-bottom:8px;}
+  .stage{
+    flex:1;min-width:200px;padding:26px 22px;border:1px solid var(--line);
+    position:relative;background:var(--paper-dim);
+  }
+  .stage + .stage{border-left:none;}
+  .stage .num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);letter-spacing:0.08em;}
+  .stage h3{font-size:19px;margin-top:8px;}
+  .stage p{font-size:13.5px;color:var(--ink-soft);line-height:1.55;margin-top:10px;}
+  .stage .arrow{position:absolute;right:-11px;top:50%;transform:translateY(-50%);width:22px;height:22px;background:var(--paper);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--gold);z-index:2;border:1px solid var(--line);}
+  .stage:last-child{background:var(--ink);color:var(--paper);}
+  .stage:last-child p{color:#b9c0d6;}
+  .stage:last-child .num{color:var(--gold);}
+
+  /* ===== CALCULATOR ===== */
+  .calc-grid{display:grid;grid-template-columns:1fr 380px;gap:48px;align-items:start;}
+  @media(max-width:920px){.calc-grid{grid-template-columns:1fr;}}
+  .pillar-block{border:1px solid var(--line);padding:24px 26px;margin-bottom:18px;background:var(--paper-dim);}
+  .pillar-block h4{font-size:16px;display:flex;align-items:center;gap:10px;}
+  .pillar-block h4 .swatch{width:9px;height:9px;border-radius:50%;}
+  .pillar-block .formula{font-size:12px;color:var(--grey);margin-top:6px;}
+  .ctrl{margin-top:18px;}
+  .ctrl label{display:flex;justify-content:space-between;font-size:13px;color:var(--ink-soft);margin-bottom:6px;}
+  .ctrl label .val{font-family:'JetBrains Mono',monospace;color:var(--ink);font-weight:600;}
+  input[type=range]{
+    -webkit-appearance:none;width:100%;height:3px;background:var(--line);border-radius:2px;outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--ink);cursor:pointer;
+    border:2px solid var(--paper);box-shadow:0 0 0 1px var(--ink);
+  }
+  .barrier input[type=range]::-webkit-slider-thumb{background:var(--rust);box-shadow:0 0 0 1px var(--rust);}
+  .pillar-score-row{display:flex;justify-content:space-between;align-items:baseline;margin-top:18px;padding-top:14px;border-top:1px dashed var(--line);}
+  .pillar-score-row .score{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600;}
+
+  .sticky-panel{position:sticky;top:88px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);padding:30px;}
+  .sticky-panel .eyebrow{color:var(--gold);}
+  .sticky-panel .eyebrow::before{background:var(--gold);}
+  #compositeScore{font-family:'Fraunces',serif;font-size:64px;margin-top:8px;}
+  #compositeBand{font-size:14px;font-weight:600;color:var(--gold);margin-top:2px;}
+  .legend{margin-top:26px;display:flex;flex-direction:column;gap:8px;font-size:12.5px;}
+  .legend div{display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:7px;}
+  .legend span.k{color:#9aa6c9;}
+  .legend span.v{font-family:'JetBrains Mono',monospace;}
+  .reset-link{margin-top:22px;display:inline-block;font-size:12px;color:#9aa6c9;cursor:pointer;text-decoration:underline;}
+
+  /* ===== PILOT TABLE ===== */
+  .pilot-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .pilot-table th{
+    text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;
+    letter-spacing:0.06em;color:var(--grey);font-weight:600;padding:10px 14px;border-bottom:1px solid var(--ink);
+  }
+  .pilot-table td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  .pilot-table tr:hover td{background:var(--paper-dim);}
+  .ent-name{font-weight:600;}
+  .bar-cell{display:flex;align-items:center;gap:10px;}
+  .bar-track{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden;max-width:120px;}
+  .bar-fill{height:100%;background:var(--gold);}
+  .badge{font-size:10.5px;font-weight:600;padding:3px 8px;border-radius:20px;letter-spacing:0.03em;}
+  .badge.sustainable{background:rgba(58,111,111,0.15);color:var(--teal);}
+  .badge.developing{background:rgba(201,162,39,0.18);color:#8a6d11;}
+  .badge.emerging{background:rgba(181,72,42,0.13);color:var(--rust);}
+
+  /* ===== FORMULA STRIP ===== */
+  .formula-strip{background:var(--ink);color:var(--paper);padding:64px 0;}
+  .formula-strip .section-head p{color:#aab3cf;}
+  .fgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.12);}
+  @media(max-width:760px){.fgrid{grid-template-columns:1fr;}}
+  .fcard{background:var(--ink);padding:26px 28px;}
+  .fcard h4{font-size:14px;color:var(--gold);font-family:'JetBrains Mono',monospace;letter-spacing:0.04em;}
+  .fcard .eq{margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:14.5px;color:#e7e9f3;line-height:1.6;}
+  .fcard p{font-size:13px;color:#9aa6c9;margin-top:10px;line-height:1.55;}
+
+  /* ===== FOOTER ===== */
+  footer{padding:48px 0;}
+  footer .wrap{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;}
+  footer .citation{font-size:12.5px;color:var(--grey);max-width:60ch;line-height:1.6;}
+  footer .credit{font-size:12.5px;color:var(--grey);text-align:right;}
+  footer .credit strong{color:var(--ink);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo"><span class="dot"></span>YX</div>
+    <div class="links">
+      <a href="#pathway">Framework</a>
+      <a href="#calculator">Calculator</a>
+      <a href="#pilot">Pilot Data</a>
+      <a href="#formulas">Methodology</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Quantitative Youth Engagement Instrument</div>
+      <h1 class="title">Measuring how far youth voice actually <em>travels</em>.</h1>
+      <p class="sub">YX is a working instrument for the Youth Engagement Index (YEI) — the first standardized, algebraic measure of meaningful youth participation in global health governance, scored across four interdependent stages: Initiation, Inquisition, Invention, and Innovation.</p>
+      <div class="byline">Conceived and developed by <strong>Seemab Mehmood</strong> — Fatima Jinnah Medical University, Lahore · Young Working Group, World Federation of Public Health Associations — with Muhammad Asaduzzaman, University of Oslo.</div>
+      <div class="cta-row">
+        <a href="#calculator" class="btn btn-primary">Run the calculator</a>
+        <a href="#pilot" class="btn btn-ghost">View pilot results</a>
+      </div>
+    </div>
+    <div class="gauge-card">
+      <div class="gauge-label">Composite YEI Reading</div>
+      <div id="gaugeScore">5.0</div>
+      <div id="gaugeBand">Developing Engagement</div>
+      <div class="pillar-readout">
+        <div><div class="pv" id="readI">5.0</div><div class="pl">Initiation</div></div>
+        <div><div class="pv" id="readQ">5.0</div><div class="pl">Inquisition</div></div>
+        <div><div class="pv" id="readN">5.0</div><div class="pl">Invention</div></div>
+        <div><div class="pv" id="readO">5.0</div><div class="pl">Innovation</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="pathway">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">The Four I's</div>
+      <h2>A pathway, not a checklist.</h2>
+      <p>Meaningful engagement compounds in sequence — access without inquiry stalls, inquiry without invention stalls, and invention without systemic integration is just a pilot project that never scales.</p>
+    </div>
+    <div class="pathway">
+      <div class="stage">
+        <div class="num">01 — ACCESS</div>
+        <h3>Initiation</h3>
+        <p>Institutional readiness: funding, entry portals, ring-fenced resources, and policy that lowers the threshold for youth to enter the room.</p>
+        <div class="arrow">→</div>
+      </div>
+      <div class="stage">
+        <div class="num">02 — UNDERSTAND</div>
+        <h3>Inquisition</h3>
+        <p>Mentorship, data access, and learning environments that let youth move from supporter to intellectual peer.</p>
+        <div class="arrow">→</div>
+      </div>
+      <div class="stage">
+        <div class="num">03 — BUILD</div>
+        <h3>Invention</h3>
+        <p>Safe space, research capacity, and seed funding for youth to prototype real policy, studies, and interventions.</p>
+        <div class="arrow">→</div>
+      </div>
+      <div class="stage">
+        <div class="num">04 — EMBED</div>
+        <h3>Innovation</h3>
+        <p>Systemic willingness to cede power — scaling youth-built solutions into permanent governance, not a pilot footnote.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="calculator">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Try the Instrument</div>
+      <h2>Score an institution or country.</h2>
+      <p>Adjust the enabling factors (gold) and limiting barriers (rust) behind each pillar. The ratio of enabling-to-barrier drives every pillar score, exactly as the YEI's resource–barrier formulas intend.</p>
+    </div>
+
+    <div class="calc-grid">
+      <div>
+        <!-- INITIATION -->
+        <div class="pillar-block" data-pillar="I">
+          <h4><span class="swatch" style="background:var(--gold)"></span>Initiation — Access &amp; Foundational Support</h4>
+          <div class="formula mono">YI = (Investment Capital × Facilitation Quality) / Institutional Insensitivity</div>
+          <div class="ctrl"><label>Investment Capital <span class="val" id="I_a_v">65</span></label><input type="range" id="I_a" min="0" max="100" value="65"></div>
+          <div class="ctrl"><label>Facilitation Quality <span class="val" id="I_b_v">60</span></label><input type="range" id="I_b" min="0" max="100" value="60"></div>
+          <div class="ctrl barrier"><label>Institutional Insensitivity <span class="val" id="I_c_v">40</span></label><input type="range" id="I_c" min="0" max="100" value="40"></div>
+          <div class="pillar-score-row"><span>Initiation score</span><span class="score" id="I_score">5.0</span></div>
+        </div>
+
+        <!-- INQUISITION -->
+        <div class="pillar-block" data-pillar="Q">
+          <h4><span class="swatch" style="background:var(--teal)"></span>Inquisition — Understanding &amp; Critical Thinking</h4>
+          <div class="formula mono">YQ = (Database Access × Learning Capital) / (Access Barriers × Teaching Quality⁻¹)</div>
+          <div class="ctrl"><label>Database Access <span class="val" id="Q_a_v">55</span></label><input type="range" id="Q_a" min="0" max="100" value="55"></div>
+          <div class="ctrl"><label>Learning Capital <span class="val" id="Q_b_v">55</span></label><input type="range" id="Q_b" min="0" max="100" value="55"></div>
+          <div class="ctrl barrier"><label>Access Barriers <span class="val" id="Q_c_v">45</span></label><input type="range" id="Q_c" min="0" max="100" value="45"></div>
+          <div class="pillar-score-row"><span>Inquisition score</span><span class="score" id="Q_score">5.0</span></div>
+        </div>
+
+        <!-- INVENTION -->
+        <div class="pillar-block" data-pillar="N">
+          <h4><span class="swatch" style="background:#7a8fd1"></span>Invention — Ideation &amp; Solution Creation</h4>
+          <div class="formula mono">YN = (Innovation Labs × Funding Capital) / (Feasibility Constraints × Tech Infrastructure⁻¹)</div>
+          <div class="ctrl"><label>Innovation Labs <span class="val" id="N_a_v">50</span></label><input type="range" id="N_a" min="0" max="100" value="50"></div>
+          <div class="ctrl"><label>Funding Capital <span class="val" id="N_b_v">50</span></label><input type="range" id="N_b" min="0" max="100" value="50"></div>
+          <div class="ctrl barrier"><label>Feasibility Constraints <span class="val" id="N_c_v">50</span></label><input type="range" id="N_c" min="0" max="100" value="50"></div>
+          <div class="pillar-score-row"><span>Invention score</span><span class="score" id="N_score">5.0</span></div>
+        </div>
+
+        <!-- INNOVATION -->
+        <div class="pillar-block" data-pillar="O">
+          <h4><span class="swatch" style="background:var(--rust)"></span>Innovation — Systemic Integration &amp; Scale</h4>
+          <div class="formula mono">YO = (Problem-Solving Capacity × Social Stability) / Resistance to Change</div>
+          <div class="ctrl"><label>Problem-Solving Capacity <span class="val" id="O_a_v">50</span></label><input type="range" id="O_a" min="0" max="100" value="50"></div>
+          <div class="ctrl"><label>Social Stability <span class="val" id="O_b_v">50</span></label><input type="range" id="O_b" min="0" max="100" value="50"></div>
+          <div class="ctrl barrier"><label>Resistance to Change <span class="val" id="O_c_v">55</span></label><input type="range" id="O_c" min="0" max="100" value="55"></div>
+          <div class="pillar-score-row"><span>Innovation score</span><span class="score" id="O_score">5.0</span></div>
+        </div>
+      </div>
+
+      <div class="sticky-panel">
+        <div class="eyebrow">Composite Reading</div>
+        <div id="compositeScore">5.0</div>
+        <div id="compositeBand">Developing Engagement</div>
+        <div class="legend">
+          <div><span class="k">Initiation (YI)</span><span class="v" id="leg_I">5.0</span></div>
+          <div><span class="k">Inquisition (YQ)</span><span class="v" id="leg_Q">5.0</span></div>
+          <div><span class="k">Invention (YN)</span><span class="v" id="leg_N">5.0</span></div>
+          <div><span class="k">Innovation (YO)</span><span class="v" id="leg_O">5.0</span></div>
+          <div><span class="k">Weighting</span><span class="v">0.25 each</span></div>
+        </div>
+        <span class="reset-link" id="resetBtn">Reset to baseline</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pilot">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Validation</div>
+      <h2>The original 11-entity pilot.</h2>
+      <p>Six countries and five global health institutions, scored on the same 0–10 instrument — the basis on which the YEI was first validated against UNICEF, ILO, and WFPHA reporting.</p>
+    </div>
+    <table class="pilot-table" id="pilotTable">
+      <thead>
+        <tr><th>Entity</th><th>YEI</th><th>Initiation</th><th>Inquisition</th><th>Invention</th><th>Innovation</th><th>Level</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="formulas" class="formula-strip">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Methodology</div>
+      <h2 style="color:#fff">The mathematics behind the reading.</h2>
+      <p>Every variable is min-max normalized 0–100 and winsorized at the 1st/99th percentile before scoring, sourced from World Bank, UNESCO, and WHO indicators alongside institutional surveys.</p>
+    </div>
+    <div class="fgrid">
+      <div class="fcard">
+        <h4>COMPOSITE YEI</h4>
+        <div class="eq">YEI = (YI + YQ + YN + YO) / 4</div>
+        <p>Equal-weighted mean of the four pillars, each re-normalized to a 0–10 scale. &lt;4.0 Emerging · 4.0–7.0 Developing · &gt;7.0 Sustainable Engagement.</p>
+      </div>
+      <div class="fcard">
+        <h4>TIME COEFFICIENT OF YOUTH ENGAGEMENT</h4>
+        <div class="eq">TC(YE) = (Σ YEIᵢ·Δtᵢ / T_total) · e^(λσ)</div>
+        <p>Adjusts the cross-sectional score for how long engagement actually lasts, penalizing tokenism via the institutional decay constant (λ) and bureaucratic friction (σ).</p>
+      </div>
+      <div class="fcard">
+        <h4>RESOURCE–BARRIER LOGIC</h4>
+        <div class="eq">score = enabling factors / limiting barriers</div>
+        <p>Every pillar is a ratio, never a sum — so an institution can't mask structural barriers simply by spending more money.</p>
+      </div>
+      <div class="fcard">
+        <h4>NEGATIVE INDICATORS</h4>
+        <div class="eq">e.g. Youth Inaccessibility = 100 − internet penetration</div>
+        <p>Barrier proxies are framed as what must be overcome, not what already exists — keeping the index diagnostic rather than celebratory.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="citation">Mehmood S, Asaduzzaman M. <em>The Youth Engagement Index (YEI): A Novel Quantitative Framework for Meaningful Youth Participation in Global Health Governance.</em> YX is an independent interactive instrument built on this published framework for exploratory and educational use.</div>
+    <div class="credit">YX — built on the Youth Engagement Index<br><strong>Original framework &amp; concept: Seemab Mehmood</strong>, Founder &amp; Developer</div>
+  </div>
+</footer>
+
+<script>
+const pillarIds = ['I','Q','N','O'];
+const pilotData = [
+  {name:'United States', type:'country', yei:7.2, I:8.1, Q:7.8, N:7.5, O:5.4, level:'Sustainable'},
+  {name:'Australia', type:'country', yei:6.8, I:7.5, Q:7.2, N:6.9, O:5.6, level:'Developing'},
+  {name:'China', type:'country', yei:6.5, I:7.8, Q:6.1, N:7.0, O:5.1, level:'Developing'},
+  {name:'India', type:'country', yei:5.1, I:5.5, Q:5.2, N:5.8, O:3.9, level:'Developing'},
+  {name:'Pakistan', type:'country', yei:3.8, I:4.1, Q:3.9, N:4.0, O:3.2, level:'Emerging'},
+  {name:'Iraq', type:'country', yei:2.9, I:3.0, Q:3.1, N:3.2, O:2.3, level:'Emerging'},
+  {name:'IFMSA', type:'org', yei:7.1, I:6.8, Q:7.5, N:7.4, O:6.7, level:'Sustainable'},
+  {name:'InciSion Global', type:'org', yei:6.6, I:6.2, Q:7.1, N:6.9, O:6.2, level:'Developing'},
+  {name:'WFPHA', type:'org', yei:6.3, I:6.0, Q:6.8, N:6.5, O:5.9, level:'Developing'},
+  {name:'WHO', type:'org', yei:6.1, I:6.5, Q:6.8, N:5.9, O:5.2, level:'Developing'},
+  {name:'UN System', type:'org', yei:5.9, I:6.2, Q:6.5, N:5.5, O:5.4, level:'Developing'},
+];
+
+function bandOf(score){
+  if(score < 4) return {label:'Emerging Engagement', cls:'emerging'};
+  if(score <= 7) return {label:'Developing Engagement', cls:'developing'};
+  return {label:'Sustainable Engagement', cls:'sustainable'};
+}
+
+function pillarScore(a,b,c){
+  // resource-barrier ratio scaled to 0-10
+  const enabling = (a/100) * (b/100);
+  const barrier = Math.max(c/100, 0.02);
+  const raw = 10 * enabling / (enabling + barrier);
+  return Math.max(0, Math.min(10, raw));
+}
+
+function readPillar(p){
+  const a = +document.getElementById(p+'_a').value;
+  const b = +document.getElementById(p+'_b').value;
+  const c = +document.getElementById(p+'_c').value;
+  document.getElementById(p+'_a_v').textContent = a;
+  document.getElementById(p+'_b_v').textContent = b;
+  document.getElementById(p+'_c_v').textContent = c;
+  const score = pillarScore(a,b,c);
+  document.getElementById(p+'_score').textContent = score.toFixed(1);
+  return score;
+}
+
+function recalc(){
+  const scores = {};
+  pillarIds.forEach(p => scores[p] = readPillar(p));
+  const composite = (scores.I + scores.Q + scores.N + scores.O) / 4;
+  const band = bandOf(composite);
+
+  document.getElementById('compositeScore').textContent = composite.toFixed(1);
+  document.getElementById('compositeBand').textContent = band.label;
+  document.getElementById('gaugeScore').textContent = composite.toFixed(1);
+  document.getElementById('gaugeBand').textContent = band.label;
+
+  document.getElementById('readI').textContent = scores.I.toFixed(1);
+  document.getElementById('readQ').textContent = scores.Q.toFixed(1);
+  document.getElementById('readN').textContent = scores.N.toFixed(1);
+  document.getElementById('readO').textContent = scores.O.toFixed(1);
+
+  document.getElementById('leg_I').textContent = scores.I.toFixed(1);
+  document.getElementById('leg_Q').textContent = scores.Q.toFixed(1);
+  document.getElementById('leg_N').textContent = scores.N.toFixed(1);
+  document.getElementById('leg_O').textContent = scores.O.toFixed(1);
+}
+
+document.querySelectorAll('input[type=range]').forEach(el => el.addEventListener('input', recalc));
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  const defaults = {
+    I_a:65, I_b:60, I_c:40,
+    Q_a:55, Q_b:55, Q_c:45,
+    N_a:50, N_b:50, N_c:50,
+    O_a:50, O_b:50, O_c:55
+  };
+  Object.entries(defaults).forEach(([id,val]) => document.getElementById(id).value = val);
+  recalc();
+});
+
+// build pilot table
+const tbody = document.querySelector('#pilotTable tbody');
+pilotData.sort((a,b)=>b.yei-a.yei).forEach(row => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="ent-name">${row.name}</td>
+    <td class="mono">
+      <div class="bar-cell">
+        <span>${row.yei.toFixed(1)}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${row.yei*10}%"></div></div>
+      </div>
+    </td>
+    <td class="mono">${row.I.toFixed(1)}</td>
+    <td class="mono">${row.Q.toFixed(1)}</td>
+    <td class="mono">${row.N.toFixed(1)}</td>
+    <td class="mono">${row.O.toFixed(1)}</td>
+    <td><span class="badge ${row.level.toLowerCase()}">${row.level}</span></td>
+  `;
+  tbody.appendChild(tr);
+});
+
+recalc();
+</script>
+</body>
+</html>
